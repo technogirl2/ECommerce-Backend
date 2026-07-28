@@ -1,19 +1,22 @@
 package com.codewithangela.ecommerceapi.config;
 
+import com.codewithangela.ecommerceapi.filter.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
+
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +24,9 @@ public class SecurityConfig {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JWTFilter jwtFilter;
 
 
     @Bean
@@ -35,21 +41,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // disable csrf token
-        http.csrf(customizer -> customizer.disable());
-        // making sure enable the security of the request
-        // All request should be authenticated
-        http.authorizeHttpRequests(request -> request.anyRequest().authenticated());
-        http.httpBasic(Customizer.withDefaults());
+        http
+                // disable csrf token
+                .csrf(customizer -> customizer.disable())
+                // making sure enable the security of the request
+                // All request should be authenticated
+                .authorizeHttpRequests(
+                        request -> request
+                                // allow user to access these endpoints, no need for authentication
+                                .requestMatchers("/user-register", "/user-login")
+                                .permitAll()
+                                .anyRequest().authenticated())
+                // make session stateless
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // make session stateless
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
     @Bean
-    public UserDetailsService userDetailService() {
-
-        return new InMemoryUserDetailsManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
