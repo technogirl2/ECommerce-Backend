@@ -1,10 +1,12 @@
 package com.codewithangela.ecommerceapi.controller;
 
+import com.codewithangela.ecommerceapi.dto.AuthResponse;
 import com.codewithangela.ecommerceapi.model.User;
 import com.codewithangela.ecommerceapi.service.JWTService;
 import com.codewithangela.ecommerceapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,23 +35,24 @@ public class UserController {
     }
 
     @PostMapping("user-login")
-    public String login(@RequestBody User user) {
+    public AuthResponse login(@RequestBody User user) {
         Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         if (auth.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername());
+            return new AuthResponse(jwtService.generateToken(user.getUsername()));
         } else {
-            return "Login Failed";
+            throw new BadCredentialsException("Login failed");
         }
 
     }
 
     @PostMapping("user-register")
-    public User register(@RequestBody User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+    public AuthResponse register(@RequestBody User user) {
+        String rawPassword = user.getPassword();
+        user.setPassword(encoder.encode(rawPassword));
         userService.saveUser(user);
-        return user;
+        return new AuthResponse(jwtService.generateToken(user.getUsername()));
     }
 
 }
