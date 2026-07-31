@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: 16px 32px;
+  background: #e3d7f9;
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    padding: 12px 20px;
+    gap: 12px;
+  }
+}
+
+.header-logo {
+  flex-shrink: 0;
+  font-family: var(--heading);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-h);
+}

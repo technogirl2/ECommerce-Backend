@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: ecommerce-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eCommerce
+    username: postgres
+    password: 2288
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: strict
+
+cloudflare:
+  r2:
+    endpoint:  https://25df583776cccc93bbfe9c769b9f76fd.r2.cloudflarestorage.com
+    accessKey: 42403a073154fd3d2f7c975650193ca8
+    secretKey: 71dfd4c5cc680afde75a8fda84874538d73e5a64ee427381fa7068581b29d0ff
+    bucket:    ecommerce
+    publicUrl: https://pub-1db7ba740497470b8c433c56a04141b4.r2.dev
