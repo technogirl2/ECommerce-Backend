@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -14,9 +15,16 @@ public class ProductService {
     @Autowired
     private ProductRepo repo;
 
+    @Autowired
+    private MediaService mediaService;
+
 
     public List<Product> getAllProducts() {
         return repo.findAll();
+    }
+
+    public Optional<Product> getProductById(int id) {
+        return repo.findById(id);
     }
 
     public void addProduct(Product product) {
@@ -24,6 +32,11 @@ public class ProductService {
     }
 
     public void deleteProduct(int id) {
+        repo.findById(id).ifPresent(product -> {
+            if (product.getImageUrl() != null) {
+                mediaService.deleteFile(product.getImageUrl());
+            }
+        });
         repo.deleteById(id);
     }
 
