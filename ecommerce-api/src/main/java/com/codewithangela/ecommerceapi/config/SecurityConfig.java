@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -55,7 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         request -> request
                                 // allow user to access these endpoints, no need for authentication
-                                .requestMatchers("/user-register", "/user-login")
+                                .requestMatchers("/user-register", "/user-login", "/user-refresh-token", "/user-logout")
                                 .permitAll()
                                 .anyRequest().authenticated())
                 // make session stateless

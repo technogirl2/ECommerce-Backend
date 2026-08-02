@@ -4,6 +4,9 @@ package com.codewithangela.ecommerceapi.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import com.codewithangela.ecommerceapi.constants.Role;
+
+
 @Data
 @Entity
 @Table(name="users")
@@ -15,4 +18,8 @@ public class User {
     @Column(unique = true)
     private String username;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
 }

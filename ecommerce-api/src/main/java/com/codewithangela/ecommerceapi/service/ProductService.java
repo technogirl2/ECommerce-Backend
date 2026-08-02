@@ -27,22 +27,24 @@ public class ProductService {
         return repo.findById(id);
     }
 
-    public void addProduct(Product product) {
-        repo.save(product);
+    public Product addProduct(Product product) {
+        return repo.save(product);
     }
 
-    public void deleteProduct(int id) {
-        repo.findById(id).ifPresent(product -> {
+    public Optional<Product> deleteProduct(int id) {
+        Optional<Product> existing = repo.findById(id);
+        existing.ifPresent(product -> {
             if (product.getImageUrl() != null) {
                 mediaService.deleteFile(product.getImageUrl());
             }
+            repo.deleteById(id);
         });
-        repo.deleteById(id);
+        return existing;
     }
 
-    public void updateProduct(Product product) {
+    public Product updateProduct(Product product) {
 
         // JPA dp upsert operation, so save = update
-        repo.save(product);
+        return repo.save(product);
     }
 }

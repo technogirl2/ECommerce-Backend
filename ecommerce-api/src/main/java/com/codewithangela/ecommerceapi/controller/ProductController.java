@@ -5,9 +5,11 @@ import com.codewithangela.ecommerceapi.service.MediaService;
 import com.codewithangela.ecommerceapi.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,10 +29,12 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "add-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Product> addProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile file) {
         product.setImageUrl(mediaService.uploadFile(file, "products"));
-        productService.addProduct(product);
+        Product saved = productService.addProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping("products/{id}")
@@ -40,13 +44,17 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("delete-product/{id}")
-    public void deleteProducts(@PathVariable int id) {
-        productService.deleteProduct(id);
+    public ResponseEntity<Product> deleteProduct(@PathVariable int id) {
+        return productService.deleteProduct(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "update-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateProduct(@ModelAttribute Product product,
+    public ResponseEntity<Product> updateProduct(@ModelAttribute Product product,
                                @RequestParam(value = "file", required = false) MultipartFile file) {
         if (file != null && !file.isEmpty()) {
             product.setImageUrl(mediaService.uploadFile(file, "products"));
@@ -54,7 +62,7 @@ public class ProductController {
             productService.getProductById(product.getId())
                     .ifPresent(existing -> product.setImageUrl(existing.getImageUrl()));
         }
-        productService.updateProduct(product);
+        Product updated = productService.updateProduct(product);
+        return ResponseEntity.ok(updated);
     }
-
 }
