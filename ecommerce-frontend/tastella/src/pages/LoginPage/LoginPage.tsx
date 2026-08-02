@@ -1,20 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import { API_BASE_URL } from '../../config/api'
 import './LoginPage.css'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [successMessage, setSuccessMessage] = useState(
+    (location.state as { message?: string } | null)?.message ?? '',
+  )
+
+  useEffect(() => {
+    if (!successMessage) return
+
+    const timeoutId = setTimeout(() => setSuccessMessage(''), 5000)
+    return () => clearTimeout(timeoutId)
+  }, [successMessage])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setSuccessMessage('')
     setIsSubmitting(true)
 
     try {
@@ -29,9 +41,13 @@ function LoginPage() {
         return
       }
 
-      const { token } = (await response.json()) as { token: string }
+      const { token, refreshToken } = (await response.json()) as {
+        token: string
+        refreshToken: string
+      }
 
       localStorage.setItem('token', token)
+      localStorage.setItem('refreshToken', refreshToken)
       navigate('/searchPage')
     } catch {
       setError('Unable to reach the server. Please try again.')
@@ -46,6 +62,8 @@ function LoginPage() {
       <div className="login-page">
         <form className="login-form" onSubmit={handleSubmit}>
           <h1 className="login-title">Welcome back</h1>
+
+          {successMessage && <p className="login-success">{successMessage}</p>}
 
           <label className="login-field">
             <span>Username</span>

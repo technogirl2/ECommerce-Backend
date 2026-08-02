@@ -56,6 +56,12 @@
   color: #e53e3e;
 }
 
+.login-success {
+  margin: 0;
+  font-size: 14px;
+  color: #2f9e44;
+}
+
 .login-submit {
   padding: 10px 14px;
   border: none;

@@ -53,7 +53,7 @@ function SearchPage() {
 
   return (
     <>
-      <Header onSearch={setQuery} />
+      <Header onSearch={setQuery} showLogout />
       <div className="search-page-results">
         {isLoading ? (
           <p className="search-page-empty">Loading snacks...</p>

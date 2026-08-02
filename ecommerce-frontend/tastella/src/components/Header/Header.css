@@ -25,3 +25,25 @@
   font-weight: 600;
   color: var(--text-h);
 }
+
+.header .search-bar {
+  margin-right: auto;
+}
+
+.header-logout {
+  flex-shrink: 0;
+  font-family: var(--body, inherit);
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: #5b21a6;
+  border: 1px solid #5b21a6;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.header-logout:hover {
+  background: #4a1b87;
+}

@@ -25,14 +25,17 @@ function RegisterPage() {
       })
 
       if (!response.ok) {
-        setError('Could not create account. Try a different username.')
+        if (response.status === 409) {
+          setError('Username already taken.')
+        } else {
+          setError('Could not create account. Try a different username.')
+        }
         return
       }
 
-      const { token } = (await response.json()) as { token: string }
-
-      localStorage.setItem('token', token)
-      navigate('/searchPage')
+      navigate('/login', {
+        state: { message: 'Account created successfully. Please log in.' },
+      })
     } catch {
       setError('Unable to reach the server. Please try again.')
     } finally {
