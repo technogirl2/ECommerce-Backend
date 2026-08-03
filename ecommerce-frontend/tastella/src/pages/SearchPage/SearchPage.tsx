@@ -6,18 +6,10 @@ import FilterPanel, { DEFAULT_FILTER_VALUE, type FilterValue } from '../../compo
 import { SNACK_TYPE_OPTIONS } from '../../constants/snackTypes'
 import { API_BASE_URL } from '../../config/api'
 import { authFetch } from '../../util/authFetch'
+import type { Product } from '../../types/product'
 import './SearchPage.css'
 
 const MAX_PRODUCTS = 20
-
-interface Product {
-  id: number
-  name: string
-  price: number
-  imageUrl?: string
-  brand: string
-  snackType: string
-}
 
 function SearchPage() {
   const [query, setQuery] = useState('')
@@ -87,7 +79,7 @@ function SearchPage() {
 
   return (
     <>
-      <Header onSearch={setQuery} showLogout />
+      <Header onSearch={setQuery} showLogout showCart />
       <div className="search-page-layout">
         <FilterPanel
           value={filter}
@@ -104,6 +96,7 @@ function SearchPage() {
             visibleProducts.map((product) => (
               <ProductCard
                 key={product.id}
+                id={product.id}
                 name={product.name}
                 price={product.price}
                 imageUrl={product.imageUrl}

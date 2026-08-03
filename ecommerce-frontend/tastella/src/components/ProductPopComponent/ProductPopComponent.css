@@ -135,6 +135,38 @@
   opacity: 0.9;
 }
 
+.product-pop-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-pop-in-cart {
+  margin: -6px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.product-pop-remove {
+  border: none;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.product-pop-remove:hover {
+  color: var(--text-h);
+}
+
+.product-pop-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 640px) {
   .product-pop-body {
     flex-direction: column;

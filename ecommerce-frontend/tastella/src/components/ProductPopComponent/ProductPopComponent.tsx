@@ -1,15 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getSnackTypeLabel } from '../../constants/snackTypes'
+import { useCart } from '../../context/CartContext'
+import type { Product } from '../../types/product'
 import './ProductPopComponent.css'
-
-interface Product {
-  id: number
-  name: string
-  price: number
-  imageUrl?: string
-  brand: string
-  snackType: string
-}
 
 interface ProductPopComponentProps {
   product: Product
@@ -19,12 +12,57 @@ interface ProductPopComponentProps {
 const QUANTITY_OPTIONS = Array.from({ length: 10 }, (_, i) => i + 1)
 
 function ProductPopComponent({ product, onClose }: ProductPopComponentProps) {
-  const [quantity, setQuantity] = useState(1)
+  const { getCartItemForProduct, addItem, updateItemQuantity, removeItem, refreshCart } =
+    useCart()
+  const cartItem = getCartItemForProduct(product.id)
+  const [quantityOverride, setQuantityOverride] = useState<number | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const quantity = quantityOverride ?? cartItem?.quantity ?? 1
+
+  useEffect(() => {
+    refreshCart()
+  }, [refreshCart])
 
   const formattedPrice = product.price.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   })
+
+  const handleAddToCart = async () => {
+    setIsSubmitting(true)
+    try {
+      await addItem(product.id, quantity)
+      setQuantityOverride(null)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleUpdateQuantity = async () => {
+    if (!cartItem) return
+
+    setIsSubmitting(true)
+    try {
+      await updateItemQuantity(cartItem.id, quantity)
+      setQuantityOverride(null)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleRemove = async () => {
+    if (!cartItem) return
+
+    setIsSubmitting(true)
+    try {
+      await removeItem(cartItem.id)
+      setQuantityOverride(null)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const isInCart = cartItem !== undefined
 
   return (
     <div className="product-pop-overlay" onClick={onClose}>
@@ -67,11 +105,17 @@ function ProductPopComponent({ product, onClose }: ProductPopComponentProps) {
           <div className="product-pop-purchase">
             <p className="product-pop-price">{formattedPrice}</p>
 
+            {isInCart && (
+              <p className="product-pop-in-cart">
+                ✓ In your cart ({cartItem.quantity})
+              </p>
+            )}
+
             <label className="product-pop-quantity">
               <span>Quantity</span>
               <select
                 value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
+                onChange={(e) => setQuantityOverride(Number(e.target.value))}
               >
                 {QUANTITY_OPTIONS.map((n) => (
                   <option key={n} value={n}>
@@ -81,9 +125,35 @@ function ProductPopComponent({ product, onClose }: ProductPopComponentProps) {
               </select>
             </label>
 
-            <button type="button" className="product-pop-add">
-              Add to cart
-            </button>
+            {isInCart ? (
+              <>
+                <button
+                  type="button"
+                  className="product-pop-add"
+                  onClick={handleUpdateQuantity}
+                  disabled={isSubmitting || quantity === cartItem.quantity}
+                >
+                  Update cart
+                </button>
+                <button
+                  type="button"
+                  className="product-pop-remove"
+                  onClick={handleRemove}
+                  disabled={isSubmitting}
+                >
+                  Remove from cart
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className="product-pop-add"
+                onClick={handleAddToCart}
+                disabled={isSubmitting}
+              >
+                Add to cart
+              </button>
+            )}
           </div>
         </div>
       </div>
