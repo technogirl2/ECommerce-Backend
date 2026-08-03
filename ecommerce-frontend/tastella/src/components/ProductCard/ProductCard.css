@@ -7,11 +7,17 @@
   background: var(--bg);
   overflow: hidden;
   text-align: left;
+  cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
 
   &:hover {
     border-color: var(--accent);
     box-shadow: var(--shadow);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 

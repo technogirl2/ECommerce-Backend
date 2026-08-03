@@ -8,7 +8,7 @@ import SearchPage from './pages/SearchPage/SearchPage'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/searchPage" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route

@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import Header from '../../components/Header/Header'
 import ProductCard from '../../components/ProductCard/ProductCard'
+import ProductPopComponent from '../../components/ProductPopComponent/ProductPopComponent'
+import FilterPanel, { DEFAULT_FILTER_VALUE, type FilterValue } from '../../components/FilterPanel/FilterPanel'
+import { SNACK_TYPE_OPTIONS } from '../../constants/snackTypes'
 import { API_BASE_URL } from '../../config/api'
+import { authFetch } from '../../util/authFetch'
 import './SearchPage.css'
 
 const MAX_PRODUCTS = 20
@@ -11,6 +15,8 @@ interface Product {
   name: string
   price: number
   imageUrl?: string
+  brand: string
+  snackType: string
 }
 
 function SearchPage() {
@@ -18,14 +24,13 @@ function SearchPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [filter, setFilter] = useState<FilterValue>(DEFAULT_FILTER_VALUE)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem('token')
-        const response = await fetch(`${API_BASE_URL}/products`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        })
+        const response = await authFetch(`${API_BASE_URL}/products`)
 
         if (!response.ok) {
           throw new Error('Failed to load products')
@@ -43,35 +48,82 @@ function SearchPage() {
     fetchProducts()
   }, [])
 
+  const brandOptions = useMemo(() => {
+    const brands = new Set(products.map((product) => product.brand))
+    return Array.from(brands).sort((a, b) => a.localeCompare(b))
+  }, [products])
+
   const visibleProducts = useMemo(() => {
     const normalized = query.trim().toLowerCase()
-    if (!normalized) return products
-    return products.filter((product) =>
-      product.name.toLowerCase().startsWith(normalized),
-    )
-  }, [query, products])
+    const minPrice = filter.minPrice ? Number(filter.minPrice) : null
+    const maxPrice = filter.maxPrice ? Number(filter.maxPrice) : null
+
+    const filtered = products.filter((product) => {
+      if (normalized && !product.name.toLowerCase().startsWith(normalized)) return false
+      if (minPrice !== null && product.price < minPrice) return false
+      if (maxPrice !== null && product.price > maxPrice) return false
+      if (filter.brands.length > 0 && !filter.brands.includes(product.brand)) return false
+      if (
+        filter.categories.length > 0 &&
+        !filter.categories.includes(product.snackType)
+      )
+        return false
+      return true
+    })
+
+    switch (filter.sortBy) {
+      case 'price-asc':
+        return filtered.sort((a, b) => a.price - b.price)
+      case 'price-desc':
+        return filtered.sort((a, b) => b.price - a.price)
+      case 'name-asc':
+        return filtered.sort((a, b) => a.name.localeCompare(b.name))
+      case 'name-desc':
+        return filtered.sort((a, b) => b.name.localeCompare(a.name))
+      default:
+        return filtered
+    }
+  }, [query, products, filter])
 
   return (
     <>
       <Header onSearch={setQuery} showLogout />
-      <div className="search-page-results">
-        {isLoading ? (
-          <p className="search-page-empty">Loading snacks...</p>
-        ) : error ? (
-          <p className="search-page-empty">{error}</p>
-        ) : visibleProducts.length > 0 ? (
-          visibleProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              name={product.name}
-              price={product.price}
-              imageUrl={product.imageUrl}
-            />
-          ))
-        ) : (
-          <p className="search-page-empty">No snacks match "{query}"</p>
-        )}
+      <div className="search-page-layout">
+        <FilterPanel
+          value={filter}
+          onChange={setFilter}
+          brandOptions={brandOptions}
+          categoryOptions={SNACK_TYPE_OPTIONS}
+        />
+        <div className="search-page-results">
+          {isLoading ? (
+            <p className="search-page-empty">Loading snacks...</p>
+          ) : error ? (
+            <p className="search-page-empty">{error}</p>
+          ) : visibleProducts.length > 0 ? (
+            visibleProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                name={product.name}
+                price={product.price}
+                imageUrl={product.imageUrl}
+                brand={product.brand}
+                snackType={product.snackType}
+                onClick={() => setSelectedProduct(product)}
+              />
+            ))
+          ) : (
+            <p className="search-page-empty">No snacks match "{query}"</p>
+          )}
+        </div>
       </div>
+
+      {selectedProduct && (
+        <ProductPopComponent
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </>
   )
 }
