@@ -79,6 +79,7 @@ public class UserController {
     @PostMapping("/user-refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         String requestToken = request.refreshToken();
+        System.out.println("hitting refresh token end point");
         return refreshTokenRepository.findByToken(requestToken)
                 .map(token -> {
                     if (refreshTokenService.isTokenExpired(token)) {
