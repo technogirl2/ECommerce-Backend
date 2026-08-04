@@ -1,0 +1,70 @@
+.collapsible-section {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.collapsible-section.has-error {
+  border-color: #d92d20;
+}
+
+.collapsible-section-error-dot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d92d20;
+}
+
+.collapsible-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.collapsible-section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.collapsible-section-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-h);
+  flex-shrink: 0;
+}
+
+.collapsible-section-summary {
+  font-size: 14px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collapsible-section-chevron {
+  flex-shrink: 0;
+  color: var(--text);
+  transition: transform 0.15s ease;
+}
+
+.collapsible-section-chevron.is-open {
+  transform: rotate(90deg);
+}
+
+.collapsible-section-body {
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}

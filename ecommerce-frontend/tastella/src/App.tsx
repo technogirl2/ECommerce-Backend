@@ -1,11 +1,17 @@
 import './App.css'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './util/ProtectedRoute'
+import AdminRoute from './util/AdminRoute'
 import { CartProvider } from './context/CartContext'
+import Footer from './components/Footer/Footer'
 import LoginPage from './pages/LoginPage/LoginPage'
 import RegisterPage from './pages/RegisterPage/RegisterPage'
 import SearchPage from './pages/SearchPage/SearchPage'
 import CheckoutPage from './pages/CheckoutPage/CheckoutPage'
+import OrderDetailPage from './pages/OrderDetailPage/OrderDetailPage'
+import OrderHistoryPage from './pages/OrderHistoryPage/OrderHistoryPage'
+import AccountSettingsPage from './pages/AccountSettingsPage/AccountSettingsPage'
+import AdminProductsPage from './pages/AdminProductsPage/AdminProductsPage'
 
 function App() {
   return (
@@ -30,7 +36,40 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <OrderHistoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute>
+              <AccountSettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <AdminRoute>
+              <AdminProductsPage />
+            </AdminRoute>
+          }
+        />
       </Routes>
+      <Footer />
     </CartProvider>
   )
 }

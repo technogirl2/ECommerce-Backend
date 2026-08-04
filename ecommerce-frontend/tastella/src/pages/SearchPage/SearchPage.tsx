@@ -79,7 +79,7 @@ function SearchPage() {
 
   return (
     <>
-      <Header onSearch={setQuery} showLogout showCart />
+      <Header onSearch={setQuery} showAccountMenu showCart />
       <div className="search-page-layout">
         <FilterPanel
           value={filter}

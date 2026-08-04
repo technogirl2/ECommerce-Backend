@@ -22,6 +22,7 @@ interface CartContextValue {
   addItem: (productId: number, quantity?: number) => Promise<void>
   updateItemQuantity: (itemId: number, quantity: number) => Promise<void>
   removeItem: (itemId: number) => Promise<void>
+  clearCart: () => void
   getCartItemForProduct: (productId: number) => CartItem | undefined
 }
 
@@ -68,6 +69,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (response.ok) setCart((await response.json()) as Cart)
   }, [])
 
+  const clearCart = useCallback(() => {
+    setCart((prev) => (prev ? { ...prev, items: [] } : prev))
+  }, [])
+
   const getCartItemForProduct = useCallback(
     (productId: number) => cart?.items.find((item) => item.product.id === productId),
     [cart],
@@ -84,6 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addItem,
         updateItemQuantity,
         removeItem,
+        clearCart,
         getCartItemForProduct,
       }}
     >

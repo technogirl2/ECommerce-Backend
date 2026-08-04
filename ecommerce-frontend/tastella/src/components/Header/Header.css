@@ -7,6 +7,7 @@
   position: relative;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 50;
   box-sizing: border-box;
   padding: 16px 32px;
   background: #e3d7f9;
@@ -24,28 +25,117 @@
   font-size: 22px;
   font-weight: 600;
   color: var(--text-h);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .header .search-bar {
   margin-right: auto;
 }
 
-.header-logout {
+.header-view-toggle {
   flex-shrink: 0;
-  font-family: var(--body, inherit);
-  font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-  background: #5b21a6;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #fff;
   border: 1px solid #5b21a6;
-  border-radius: 6px;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background 0.15s ease;
 }
 
-.header-logout:hover {
-  background: #4a1b87;
+.header-view-toggle button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #5b21a6;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.header-view-toggle button.is-active {
+  background: #5b21a6;
+  color: #fff;
+}
+
+.header-account {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-account-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #5b21a6;
+  background: #fff;
+  color: #5b21a6;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.header-account-trigger:hover {
+  background: #5b21a6;
+  color: #fff;
+}
+
+.header-account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  box-sizing: border-box;
+  margin-top: -8px;
+  padding: 8px;
+  padding-top: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 20;
+}
+
+.header-account:hover .header-account-dropdown,
+.header-account-dropdown.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.header-account-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.header-account-item:hover {
+  background: var(--accent-bg);
+}
+
+.header-account-item-logout {
+  color: #d92d20;
 }
 
 .header-cart {

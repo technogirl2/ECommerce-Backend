@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
+import EyeIcon from '../../components/EyeIcon/EyeIcon'
 import { API_BASE_URL } from '../../config/api'
+import { getRoleFromToken } from '../../util/jwt'
 import './LoginPage.css'
 
 function LoginPage() {
@@ -10,6 +12,7 @@ function LoginPage() {
   const location = useLocation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [successMessage, setSuccessMessage] = useState(
@@ -48,7 +51,7 @@ function LoginPage() {
 
       localStorage.setItem('token', token)
       localStorage.setItem('refreshToken', refreshToken)
-      navigate('/searchPage')
+      navigate(getRoleFromToken(token) === 'ADMIN' ? '/admin/products' : '/searchPage')
     } catch {
       setError('Unable to reach the server. Please try again.')
     } finally {
@@ -78,13 +81,23 @@ function LoginPage() {
 
           <label className="login-field">
             <span>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-            />
+            <div className="login-password-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="login-toggle-visibility"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <EyeIcon visible={showPassword} />
+              </button>
+            </div>
           </label>
 
           {error && <p className="login-error">{error}</p>}

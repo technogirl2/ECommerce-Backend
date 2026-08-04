@@ -1,0 +1,84 @@
+.order-history-page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.order-history-title {
+  margin: 0 0 24px;
+  text-align: left;
+}
+
+.order-history-empty {
+  color: var(--text);
+  padding: 20px 0;
+}
+
+.order-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-history-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.order-history-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.order-history-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-history-item-id {
+  margin: 0 0 2px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.order-history-item-date {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.order-history-item-items {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.order-history-item-status {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-history-item-total {
+  margin: 0;
+  width: 80px;
+  flex-shrink: 0;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-h);
+}
