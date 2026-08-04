@@ -9,6 +9,7 @@ import com.codewithangela.ecommerceapi.model.Product;
 import com.codewithangela.ecommerceapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -86,5 +87,11 @@ public class CartService {
         return cart.getItems().stream()
                 .filter(item -> item.getId() == itemId)
                 .findFirst();
+    }
+
+    @Transactional
+    public void clearCart(Cart cart) {
+        cart.getItems().clear();
+        cartRepo.save(cart);
     }
 }

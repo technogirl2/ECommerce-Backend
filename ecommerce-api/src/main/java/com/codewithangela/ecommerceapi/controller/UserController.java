@@ -3,6 +3,7 @@ package com.codewithangela.ecommerceapi.controller;
 import com.codewithangela.ecommerceapi.constants.Role;
 import com.codewithangela.ecommerceapi.dao.RefreshTokenRepo;
 import com.codewithangela.ecommerceapi.dto.AuthResponse;
+import com.codewithangela.ecommerceapi.dto.ChangePasswordRequest;
 import com.codewithangela.ecommerceapi.dto.RefreshTokenRequest;
 import com.codewithangela.ecommerceapi.model.User;
 import com.codewithangela.ecommerceapi.service.JWTService;
@@ -13,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,7 +57,7 @@ public class UserController {
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         User authenticatedUser = userService.getUserByUsername(user.getUsername());
-        String accessToken = jwtService.generateToken(authenticatedUser.getUsername());
+        String accessToken = jwtService.generateToken(authenticatedUser.getUsername(), authenticatedUser.getRole().name());
         String refreshToken = refreshTokenService.createRefreshToken(authenticatedUser.getId()).getToken();
 
         return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
@@ -87,10 +90,29 @@ public class UserController {
                         return ResponseEntity.badRequest()
                                 .body(Map.of("error", "Refresh token expired. Please login again."));
                     }
-                    String newJwt = jwtService.generateToken(token.getUser().getUsername());
+                    String newJwt = jwtService.generateToken(token.getUser().getUsername(), token.getUser().getRole().name());
                     return ResponseEntity.ok(Map.of("token", newJwt));
                 })
                 .orElse(ResponseEntity.badRequest().body(Map.of("error", "Invalid refresh token.")));
+    }
+
+    @PutMapping("user-password")
+    public ResponseEntity<?> changePassword(Authentication authentication,
+                                             @RequestBody ChangePasswordRequest request) {
+        User user = userService.getUserByUsername(authentication.getName());
+
+        if (!encoder.matches(request.oldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Current password is incorrect."));
+        }
+
+        if (request.newPassword() == null || request.newPassword().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "New password is required."));
+        }
+
+        userService.updatePassword(user, encoder.encode(request.newPassword()));
+
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully."));
     }
 
     @PostMapping("/user-logout")
