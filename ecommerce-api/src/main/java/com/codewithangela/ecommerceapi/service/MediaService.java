@@ -37,7 +37,7 @@ public class MediaService {
         // 2. Validate extension is an allowed type
         String ext = getFileExtension(original);
         switch (ext) {
-            case "jpg","jpeg","png","gif","mp4","mov","pdf","doc","docx","txt" -> {}
+            case "jpg","jpeg","png","gif","avif","mp4","mov","pdf","doc","docx","txt" -> {}
             default -> throw new UnsupportedMediaTypeException("Unsupported file type: " + contentType);
         }
 

@@ -2,6 +2,7 @@ package com.codewithangela.ecommerceapi.filter;
 
 import com.codewithangela.ecommerceapi.service.JWTService;
 import com.codewithangela.ecommerceapi.service.authUserDetailService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            userName = jwtService.extractUserName(token);
+            try {
+                userName = jwtService.extractUserName(token);
+            } catch (JwtException e) {
+                // expired/invalid token: leave userName null so the request falls through
+                // unauthenticated and Spring Security returns a 401 instead of a 500
+            }
         }
 
         // if not null, already verified

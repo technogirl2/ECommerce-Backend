@@ -1,0 +1,28 @@
+.search-page-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding: 32px 32px 32px 0;
+}
+
+.search-page-layout .filter-panel {
+  margin-left: 32px;
+}
+
+.search-page-results {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.search-page-empty {
+  color: var(--text);
+  padding: 20px 0;
+}

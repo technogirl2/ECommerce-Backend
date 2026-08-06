@@ -1,5 +1,7 @@
 package com.codewithangela.ecommerceapi.model;
 
+import com.codewithangela.ecommerceapi.constants.Role;
+import com.codewithangela.ecommerceapi.constants.SnackType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,4 +17,8 @@ public class Product {
     private String name;
     private double price;
     private String imageUrl;
+    private String brand;
+
+    @Enumerated(EnumType.STRING)
+    private SnackType snackType;
 }

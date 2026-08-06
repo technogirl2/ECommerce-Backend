@@ -20,4 +20,13 @@ public class UserService {
     public List<User> getUsers() {
         return repo.findAll();
     }
+
+    public User getUserByUsername(String username) {
+        return repo.findByUsername(username);
+    }
+
+    public User updatePassword(User user, String newHashedPassword) {
+        user.setPassword(newHashedPassword);
+        return repo.save(user);
+    }
 }
