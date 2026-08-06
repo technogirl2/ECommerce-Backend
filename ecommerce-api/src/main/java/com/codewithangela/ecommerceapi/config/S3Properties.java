@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "cloudflare.r2")
+@ConfigurationProperties(prefix = "aws.s3")
 @Getter
 @Setter
-public class CloudflareProperties {
+public class S3Properties {
 
-    private String endpoint;
+    private String region;
     private String accessKey;
     private String secretKey;
     private String bucket;

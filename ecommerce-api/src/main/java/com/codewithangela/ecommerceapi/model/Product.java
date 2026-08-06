@@ -1,11 +1,8 @@
 package com.codewithangela.ecommerceapi.model;
 
-import com.codewithangela.ecommerceapi.constants.Role;
 import com.codewithangela.ecommerceapi.constants.SnackType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Entity
